@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html, body, #root { height: 100%; }
+
+body {
+  font-family: 'Manrope', system-ui, sans-serif;
+  background: #f7faf5;
+  color: #0d1b12;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display { font-family: 'Fraunces', Georgia, serif; }
+
+.grain::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+}
+
+.btn-primary {
+  @apply inline-flex items-center gap-2 rounded-full bg-leaf-600 px-6 py-3 text-white font-semibold shadow-lg shadow-leaf-600/25 hover:bg-leaf-700 transition-colors;
+}
+.btn-ghost {
+  @apply inline-flex items-center gap-2 rounded-full border border-leaf-200 bg-white px-5 py-2.5 font-medium text-ink-900 hover:border-leaf-500 hover:text-leaf-700 transition-colors;
+}
+.card {
+  @apply rounded-3xl bg-white border border-leaf-100 shadow-sm hover:shadow-xl transition-shadow;
+}
+.pill {
+  @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-up { animation: fadeUp 0.5s ease-out both; }
+
+/* Score ring smooth stroke */
+.ring-track { stroke: #e5f3e9; }
+.ring-value { stroke-linecap: round; transition: stroke-dashoffset 0.8s ease-out; }
