@@ -337,11 +337,12 @@ Frontend base URL comes from `VITE_API_BASE_URL` (defaults to `http://localhost:
 <a id="author"></a>
 ## Author
 
-**Built by** Yash Gohel
-_Full-stack engineer · .NET + React + Cloud AI_
+**Built by** 
+- Yash Gohel
+- _Full-stack engineer · .NET + React + Cloud AI_
 
 - Portfolio: https://ironman-yash-stark.vercel.app
 - Email: gohelyash11@gmail.com
 
 > **Resume one-liner:**
-> *Built NutriScan AI — a full-stack AI food-label analyzer on ASP.NET Core 8 + React, integrating Azure OpenAI, Vision OCR, Blob Storage and SQL; shipped real-time camera scanning, regex-based expiry detection, JWT-secured history management, and a mobile-first responsive UI.*
+> *Built NutriScan AI — a full-stack AI food-label analyzer on ASP.NET Core 8 + React, integrating Azure OpenAI, Vision OCR, Blob Storage and SQL; Shipped real-time camera scanning, regex-based expiry detection, JWT-secured history management, and a mobile-first responsive UI.*
