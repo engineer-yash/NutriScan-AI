@@ -111,7 +111,7 @@ export default function App() {
         </Routes>
       </main>
       <footer className="py-8 sm:py-10 text-center text-xs sm:text-sm text-neutral-500 px-4">
-        NutriScan AI  •  Powered by Azure OpenAI, Vision &amp; Blob
+        NutriScan AI  •  Powered by Azure OpenAI, Vision &amp; Blob  •  Created by - Yash Gohel
       </footer>
     </div>
   );
