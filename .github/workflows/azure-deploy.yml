@@ -1,57 +1,114 @@
-name: Deploy to Azure
+
+name: NutriScan AI - Azure Full Stack Deployment
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
+
+permissions:
+  contents: read
 
 jobs:
-  build-and-deploy-backend:
+  # ==========================================
+  # 1. Deploy React Frontend to Azure Static Web Apps
+  # ==========================================
+  deploy_frontend:
+    name: Deploy Frontend
+    if: github.event_name != 'pull_request' || github.event.action != 'closed'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          dotnet-version: '8.0.x'
+          submodules: true
+          lfs: false
 
-      - name: Restore & Build
-        run: |
-          cd backend
-          dotnet restore
-          dotnet publish -c Release -o publish
+      - name: Build and Deploy Frontend
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ZEALOUS_GROUND_0D319BB0F }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: frontend
+          api_location: ""
+          output_location: build
 
-      - name: Deploy Backend
-        uses: azure/webapps-deploy@v2
+  # ==========================================
+  # 2. Build ASP.NET Core Backend
+  # ==========================================
+  build_backend:
+    name: Build ASP.NET Core API
+    if: github.event_name != 'pull_request' || github.event.action != 'closed'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.x'
+
+      # IMPORTANT:
+      # Replace this path with your actual API .csproj path.
+      - name: Restore dependencies
+        run: dotnet restore backend/NutriScan.API/NutriScan.API.csproj
+
+      - name: Build API
+        run: dotnet build backend/NutriScan.API/NutriScan.API.csproj --configuration Release --no-restore
+
+      - name: Publish API
+        run: dotnet publish backend/NutriScan.API/NutriScan.API.csproj --configuration Release --no-build --output ./publish
+
+      - name: Upload published API
+        uses: actions/upload-artifact@v4
+        with:
+          name: published-api
+          path: ./publish/
+
+  # ==========================================
+  # 3. Deploy Backend to Azure App Service
+  # ==========================================
+  deploy_backend:
+    name: Deploy Backend
+    runs-on: ubuntu-latest
+    needs: build_backend
+    if: github.event_name != 'pull_request' || github.event.action != 'closed'
+
+    steps:
+      - name: Download published API
+        uses: actions/download-artifact@v4
+        with:
+          name: published-api
+          path: ./publish
+
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v3
         with:
           app-name: nutriscan-api
+          slot-name: Production
+          package: ./publish
           publish-profile: ${{ secrets.AZURE_BACKEND_PUBLISH_PROFILE }}
-          package: backend/publish
 
-  build-and-deploy-frontend:
+  # ==========================================
+  # 4. Close Static Web Apps Preview on PR Close
+  # ==========================================
+  close_pull_request:
+    name: Close Frontend Preview
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Node
-        uses: actions/setup-node@v3
+      - name: Close Pull Request Deployment
+        uses: Azure/static-web-apps-deploy@v1
         with:
-          node-version: '20'
-
-      - name: Install & Build
-        run: |
-          cd frontend
-          npm install
-          npm run build
-
-      - name: Deploy Frontend
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: nutriscan-web
-          publish-profile: ${{ secrets.AZURE_FRONTEND_PUBLISH_PROFILE }}
-          package: frontend/dist
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ZEALOUS_GROUND_0D319BB0F }}
+          action: close
