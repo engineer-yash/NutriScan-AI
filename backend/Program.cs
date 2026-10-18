@@ -47,6 +47,18 @@ var allowedOrigins = builder.Configuration
         "https://nutriscan-web.azurewebsites.net", //Old
         "http://localhost:5173"
     };
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("NutriScanCors", policy =>
+    {
+        policy
+            .WithOrigins(
+                "https://zealous-ground-0d319bb0f.3.azurestaticapps.net"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
