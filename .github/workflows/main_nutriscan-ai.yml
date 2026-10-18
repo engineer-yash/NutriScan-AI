@@ -1,5 +1,4 @@
-# Builds and deploys the ASP.NET Core 8 backend to the Azure App Service "nutriscan-api".
-# This is the ONLY backend workflow. (Older duplicates were removed.)
+
 
 name: Build and deploy ASP.Net Core app to Azure Web App - nutriscan-api
 
