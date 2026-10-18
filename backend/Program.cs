@@ -38,29 +38,16 @@ options.AddSecurityRequirement(new OpenApiSecurityRequirement
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Read allowed origins from configuration (set via App Service -> Configuration):
-//   Cors:AllowedOrigins:0 = https://<your-swa>.azurestaticapps.net
-//   Cors:AllowedOrigins:1 = https://localhost:5173
-var allowedOrigins = builder.Configuration
-    .GetSection("Cors:AllowedOrigins")
-    .Get<string[]>()
-    ?? new[]
-    {
-        "https://zealous-ground-0d319bb0f.1.azurestaticapps.net", //New
-        "https://nutriscan-web.azurewebsites.net", //Old
-        "http://localhost:5173"
-    };
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         policy =>
         {
             policy
-                .WithOrigins(allowedOrigins)
+                .WithOrigins("https://zealous-ground-0d319bb0f.1.azurestaticapps.net")
                 .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
+                .AllowAnyMethod();
+
         });
 });
 
