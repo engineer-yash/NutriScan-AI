@@ -15,6 +15,7 @@ var jwtKey = jwtSettings["Key"] ?? throw new InvalidOperationException("JWT Key 
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHealthChecks();
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -112,6 +113,7 @@ using (var scope = app.Services.CreateScope())
     DbSeeder.Seed(db);
 }
 
+app.MapHealthChecks("/ping");
 app.UseAuthentication();
 app.UseAuthorization();
 
