@@ -8,7 +8,7 @@ on:
       - 'main'
     paths:
       - 'backend/**'
-      - '.github/workflows/main_nutriscan-api.yml'
+      - '.github/workflows/main_nutriscan-ai.yml'
   workflow_dispatch:
 
 jobs:
@@ -57,7 +57,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'nutriscan-api'
+          app-name: 'nutriscan-ai'
           slot-name: 'Production'
           package: ./publish
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_A57DF41E6776478D8EC03540ECA7019F }}
