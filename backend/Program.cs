@@ -38,15 +38,29 @@ options.AddSecurityRequirement(new OpenApiSecurityRequirement
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Read allowed origins from configuration (set via App Service -> Configuration):
+//   Cors:AllowedOrigins:0 = https://<your-swa>.azurestaticapps.net
+//   Cors:AllowedOrigins:1 = https://localhost:5173 (optional, for local dev)
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>()
+    ?? new[]
+    {
+        "https://zealous-ground-0d319bb0f.1.azurestaticapps.net", //New
+        "https://nutriscan-web.azurewebsites.net", //Old
+        "http://localhost:5173"
+    };
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         policy =>
         {
             policy
-                .WithOrigins("https://nutriscan-web.azurewebsites.net")
+                .WithOrigins(allowedOrigins)
                 .AllowAnyHeader()
-                .AllowAnyMethod();
+                .AllowAnyMethod()
+                .AllowCredentials();
         });
 });
 
@@ -87,7 +101,7 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(o =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (builder.Configuration.GetValue<bool>("Swagger:Enabled", true))
 {
     app.UseSwagger();
     app.UseSwaggerUI();
