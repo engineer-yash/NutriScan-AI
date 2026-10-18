@@ -47,33 +47,6 @@ var allowedOrigins = builder.Configuration
         "https://nutriscan-web.azurewebsites.net", //Old
         "http://localhost:5173"
     };
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend",
-        policy =>
-        {
-            policy
-                // Allow explicit origins from config + any *.azurestaticapps.net subdomain
-                // (SWA subdomain tier rotates: .1., .3., .5. ...)
-                .SetIsOriginAllowed(origin =>
-                {
-                    if (string.IsNullOrWhiteSpace(origin)) return false;
-                    if (allowedOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase)) return true;
-                    try
-                    {
-                        var host = new Uri(origin).Host;
-                        return host.EndsWith(".azurestaticapps.net", StringComparison.OrdinalIgnoreCase)
-                            || host.Equals("localhost", StringComparison.OrdinalIgnoreCase);
-                    }
-                    catch { return false; }
-                })
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-                // NOTE: AllowCredentials() intentionally removed.
-                // JWT is sent via Authorization header, not cookies, so credentials aren't needed.
-                // Omitting it also avoids conflicts with Azure App Service Portal CORS blade.
-        });
-});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
