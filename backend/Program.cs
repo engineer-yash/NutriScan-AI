@@ -38,18 +38,15 @@ options.AddSecurityRequirement(new OpenApiSecurityRequirement
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend",
-        policy =>
-        {
-            policy
-                .WithOrigins("https://zealous-ground-0d319bb0f.3.azurestaticapps.net")
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-
-        });
-});
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>()
+    ?? new[]
+    {
+        "https://zealous-ground-0d319bb0f.3.azurestaticapps.net", //New
+        "https://nutriscan-web.azurewebsites.net", //Old
+        "http://localhost:5173"
+    };
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
