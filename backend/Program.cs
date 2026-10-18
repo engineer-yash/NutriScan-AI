@@ -40,7 +40,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Read allowed origins from configuration (set via App Service -> Configuration):
 //   Cors:AllowedOrigins:0 = https://<your-swa>.azurestaticapps.net
-//   Cors:AllowedOrigins:1 = https://localhost:5173 (optional, for local dev)
+//   Cors:AllowedOrigins:1 = https://localhost:5173
 var allowedOrigins = builder.Configuration
     .GetSection("Cors:AllowedOrigins")
     .Get<string[]>()
