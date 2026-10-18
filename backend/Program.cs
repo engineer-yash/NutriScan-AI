@@ -44,7 +44,7 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy
-                .WithOrigins("https://zealous-ground-0d319bb0f.1.azurestaticapps.net")
+                .WithOrigins("https://zealous-ground-0d319bb0f.3.azurestaticapps.net")
                 .AllowAnyHeader()
                 .AllowAnyMethod();
 
